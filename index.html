@@ -123,12 +123,17 @@ const RC={Thunder:"#2563eb",Forest:"#16a34a",Fire:"#dc2626",Machine:"#d97706",Vo
 const CC={1:"#6b7280",2:"#16a34a",3:"#2563eb",4:"#7c3aed"};
 const RBONUS={Thunder:{2:"Rally on cast: +10%AS 3s",4:"Rally: +15%AS + free hit",6:"Rally: +20%AS + 5%HP smite"},Forest:{3:"Path tier 1",5:"Path tier 2",7:"Path tier 3"},Fire:{3:"Summon Atakhan",5:"Atakhan grows",7:"Atakhan drains"},Machine:{2:"+1 Module",4:"+2 Modules",6:"+3 Modules"},Void:{2:"+1 Mutation +8%AS",4:"+2 Mut +18%AS",6:"+3 Mut +28%AS"},Chemistry:{3:"Shimmer burst",5:"Auto-heal 60%",7:"Shimmer +30%"}};
 const CBONUS={Arcanist:{2:"+15 spell pow",4:"+25 spell pow",6:"+40 spell pow"},Bruiser:{2:"Burn 3%HP/hit",4:"Burn 5%HP",6:"Burn 8%HP+spread"},Defender:{2:"+15%AS on ult",4:"+25%AS",6:"+40%AS+10%dmg"},Disruptor:{2:"Dazzle +25%dmg",4:"+45% dmg"},Gunslinger:{2:"+20%ATK 4th shot",4:"+35%ATK splash"},Invoker:{2:"+25% mana",4:"+45% mana"},Juggernaut:{2:"Slow 10%/hit",4:"Slow 18%",6:"Slow 25%+15%dmg"},Longshot:{2:"+12%+2%/hex",3:"+18%+3%",4:"+24%+4%",5:"+30%+5%"},Quickstriker:{2:"+10-30%AS",3:"+20-45%",4:"+30-60%",5:"+40-80%"},Warden:{2:"4th hit 20%slow",3:"30% slow",4:"40% slow",5:"50%+root"}};
-function waveConf(w){const boss=w%5===0&&w>0;const normCnt=Math.ceil(12*1.15**(w-1));const cnt=boss?normCnt*2+1:normCnt;const hp=150*1.18**(w-1);const ad=5*2**(Math.floor(w/5));return{count:cnt,hp:Math.round(hp),ad,isBoss:boss}}
+function waveConf(w){const boss=w%5===0&&w>0;const hasElite=(w%10===3)||(w%10===7)||boss;
+  const B=[{f:1,hp:100,cnt:20,ca:5,hs:1.2},{f:11,hp:200,cnt:25,ca:10,hs:1.2},{f:21,hp:300,cnt:30,ca:15,hs:1.25},{f:31,hp:400,cnt:40,ca:20,hs:1.25},{f:41,hp:500,cnt:50,ca:25,hs:1.25}];
+  let b=B[0];for(let i=B.length-1;i>=0;i--)if(w>=B[i].f){b=B[i];break}
+  const wi=w-b.f;const hp=Math.round(b.hp*b.hs**wi);const normCnt=b.cnt+b.ca*wi;
+  const baseCnt=boss?normCnt*2:normCnt;const eliteCnt=hasElite?Math.floor(baseCnt/10):0;
+  const cnt=baseCnt+eliteCnt+(boss?1:0);const ad=5*2**(Math.floor(w/5));return{count:cnt,hp,ad,isBoss:boss,hasElite}}
 
 let G;
 function initGame(){
   const pool={};CHAMPS.forEach(c=>pool[c.id]=POOL[c.c]||12);
-  G={gold:8,lv:2,xp:0,hp:100,wave:0,phase:'prep',shop:[],pool,towers:[],bench:[],enemies:[],obstacles:[],projectiles:[],dmgTexts:[],sel:null,eid:0,tick:0,spawnIdx:0,waveTotal:0,waveKills:0,ultFx:[],timer:null};
+  G={gold:12,lv:2,xp:0,hp:100,wave:0,phase:'prep',shop:[],pool,towers:[],bench:[],enemies:[],obstacles:[],projectiles:[],dmgTexts:[],sel:null,eid:0,tick:0,spawnIdx:0,normSpawned:0,waveTotal:0,waveKills:0,ultFx:[],timer:null};
   G.shop=rollShop(G.lv,G.pool);
 }
 function rollShop(lv,pool){const odds=ODDS[Math.min(lv,10)]||ODDS[10];const byT=[[],[],[],[]];CHAMPS.forEach(c=>{if(pool[c.id]>0)byT[c.c-1].push(c.id)});const s=[];for(let i=0;i<5;i++){let r=Math.random()*100,t=0;for(let j=0;j<4;j++){r-=odds[j];if(r<=0){t=j;break}}const a=byT[t];s.push(a.length?a[Math.floor(Math.random()*a.length)]:null)}return s}
@@ -204,16 +209,17 @@ function dDrop(ev,type,idx){
 }
 
 function startWave(){
-  if(G.phase!=='prep')return;G.wave++;G.phase='combat';G.tick=0;G.spawnIdx=0;G.enemies=[];G.obstacles=[];G.ultFx=[];G.projectiles=[];G.dmgTexts=[];G.sel=null;
+  if(G.phase!=='prep')return;G.wave++;G.phase='combat';G.tick=0;G.spawnIdx=0;G.normSpawned=0;G.elitesSpawned=0;G.bossSpawned=false;G.enemies=[];G.obstacles=[];G.ultFx=[];G.projectiles=[];G.dmgTexts=[];G.sel=null;
   const wc=waveConf(G.wave);G.waveTotal=wc.count;G.waveKills=0;
-  setLog('Wave '+G.wave+(wc.isBoss?' 👹 BOSS':'')+' — '+wc.count+' enemies');
+  setLog('Wave '+G.wave+(wc.isBoss?' 👹 BOSS':'')+(wc.hasElite&&!wc.isBoss?' 💀 ELITE':'')+' — '+wc.count+' enemies');
   G.towers.forEach(t=>{t.mana=0;t.cd=0});render();
   G.timer=setInterval(()=>{gameTick();gameTick()},TMS); // x2 SPEED
 }
 function gameTick(){
+  if(G.phase!=='combat')return;
   G.tick++;const wc=waveConf(G.wave);const sr=wc.isBoss?30:Math.max(5,11-Math.floor(G.wave/3));
-  if(G.spawnIdx<wc.count&&G.tick%sr===0){const isBossUnit=wc.isBoss&&G.spawnIdx===10;const unitHp=isBossUnit?wc.hp*15:wc.hp;G.enemies.push({id:G.eid++,hp:unitHp,maxHp:unitHp,ad:wc.ad,path:mkPath(),pi:0,x:3,y:-.5,slow:0,isBoss:isBossUnit});G.spawnIdx++}
-  G.enemies.forEach(en=>{if(en.hp<=0)return;const bl=G.obstacles.find(o=>o.hp>0&&dist({x:en.x,y:en.y},o)<.7);if(bl){bl.hp-=en.ad*(en.isBoss?3:1)/TPS;return}const baseSpd=en.isBoss?ESPD*.7:ESPD;const spd=baseSpd*(1-Math.min(en.slow*.4,.6));en.slow=Math.max(0,en.slow-.4/TPS);if(en.pi<en.path.length-1){const tg=en.path[en.pi+1],dx=tg.x-en.x,dy=tg.y-en.y,d=Math.sqrt(dx*dx+dy*dy);if(d<spd){en.x=tg.x;en.y=tg.y;en.pi++}else{en.x+=dx/d*spd;en.y+=dy/d*spd}}else{G.hp-=(en.isBoss?10:1);en.hp=0}});
+  if(G.spawnIdx<wc.count&&G.tick%sr===0){const batch=Math.min(Math.random()<.5?1:2,wc.count-G.spawnIdx);for(let s=0;s<batch&&G.spawnIdx<wc.count;s++){let isB=false,isE=false;const expElites=Math.floor(G.normSpawned/10);if(wc.isBoss&&G.normSpawned>=24&&!G.bossSpawned){isB=true;G.bossSpawned=true}else if(wc.hasElite&&G.normSpawned>0&&G.elitesSpawned<expElites){isE=true;G.elitesSpawned++}else{G.normSpawned++}const unitHp=isB?wc.hp*10:isE?wc.hp*3:wc.hp;G.enemies.push({id:G.eid++,hp:unitHp,maxHp:unitHp,ad:wc.ad,path:mkPath(),pi:0,x:3,y:-.5,slow:0,isBoss:isB,isElite:isE});G.spawnIdx++}}
+  G.enemies.forEach(en=>{if(en.hp<=0)return;const bl=G.obstacles.find(o=>o.hp>0&&dist({x:en.x,y:en.y},o)<.7);if(bl){bl.hp-=en.ad*(en.isBoss?3:en.isElite?2:1)/TPS;return}const baseSpd=en.isBoss?ESPD*.5:ESPD;const spd=baseSpd*(1-Math.min(en.slow*.4,.6));en.slow=Math.max(0,en.slow-.4/TPS);if(en.pi<en.path.length-1){const tg=en.path[en.pi+1],dx=tg.x-en.x,dy=tg.y-en.y,d=Math.sqrt(dx*dx+dy*dy);if(d<spd){en.x=tg.x;en.y=tg.y;en.pi++}else{en.x+=dx/d*spd;en.y+=dy/d*spd}}else{const lm=Math.min(4,Math.ceil(G.wave/10));G.hp-=(en.isBoss?10:en.isElite?3:1)*lm;en.hp=0}});
   G.obstacles=G.obstacles.filter(o=>o.hp>0);
   G.projectiles.forEach(p=>{const dx=p.tx-p.x,dy=p.ty-p.y,d=Math.sqrt(dx*dx+dy*dy);if(d<.15){p.done=true;return}const spd=.25;p.x+=dx/d*spd;p.y+=dy/d*spd});
   G.projectiles=G.projectiles.filter(p=>!p.done&&G.tick-p.t<30);
@@ -255,9 +261,9 @@ function render(){
     mh+='</div>'});
   // Projectiles
   G.projectiles.forEach(p=>{mh+='<div class="proj" style="left:'+(p.x*C+C/2-p.sz/2)+'px;top:'+(p.y*C+C/2-p.sz/2)+'px;width:'+p.sz+'px;height:'+p.sz+'px;background:'+p.col+';box-shadow:0 0 6px '+p.col+'"></div>'});
-  // Enemies with HP numbers
-  G.enemies.filter(e=>e.hp>0).forEach(en=>{const sz=en.isBoss?44:24;const pct=Math.max(0,en.hp/en.maxHp*100);const hpTxt=en.hp>=1000?Math.round(en.hp/100)/10+'k':Math.round(en.hp);
-    mh+='<div class="enemy" style="left:'+(en.x*C+C/2-sz/2)+'px;top:'+(en.y*C+C/2-sz/2)+'px;width:'+sz+'px;font-size:'+(en.isBoss?34:20)+'px">'+(en.isBoss?'👹':'👺')+'<div class="hpb" style="position:relative"><div class="hpf" style="width:'+pct+'%;background:'+(pct>50?'#16a34a':pct>25?'#d97706':'#dc2626')+'"></div><span style="position:absolute;top:-1px;left:0;right:0;text-align:center;font-size:7px;color:#fff;text-shadow:0 0 2px #000;line-height:5px">'+hpTxt+'</span></div></div>'});
+  // Enemies with HP numbers (normal 👺, elite 💀, boss 👹)
+  G.enemies.filter(e=>e.hp>0).forEach(en=>{const sz=en.isBoss?44:en.isElite?32:24;const pct=Math.max(0,en.hp/en.maxHp*100);const hpTxt=en.hp>=1000?Math.round(en.hp/100)/10+'k':Math.round(en.hp);const emoji=en.isBoss?'👹':en.isElite?'💀':'👺';const fsz=en.isBoss?34:en.isElite?24:20;
+    mh+='<div class="enemy" style="left:'+(en.x*C+C/2-sz/2)+'px;top:'+(en.y*C+C/2-sz/2)+'px;width:'+sz+'px;font-size:'+fsz+'px">'+emoji+'<div class="hpb" style="position:relative"><div class="hpf" style="width:'+pct+'%;background:'+(pct>50?'#16a34a':pct>25?'#d97706':'#dc2626')+'"></div><span style="position:absolute;top:-1px;left:0;right:0;text-align:center;font-size:7px;color:#fff;text-shadow:0 0 2px #000;line-height:5px">'+hpTxt+'</span></div></div>'});
   G.obstacles.forEach(o=>{mh+='<div class="obs" style="left:'+(o.x*C+C/2-14)+'px;top:'+(o.y*C+C/2-14)+'px;width:28px;height:28px;font-size:20px;opacity:'+Math.max(.3,o.hp/o.maxHp)+'">🪨</div>'});
   G.ultFx.forEach(f=>{const a=G.tick-f.t;mh+='<div class="ufx" style="left:'+(f.x*C-4)+'px;top:'+(f.y*C-4)+'px;width:'+(C+8)+'px;height:'+(C+8)+'px;opacity:'+Math.max(0,1-a/12)+';transform:scale('+(1+a/8)+')"></div>'});
   // Floating damage text

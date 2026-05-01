@@ -94,41 +94,60 @@ const PX=[{x:3,y:6},{x:3,y:7},{x:3,y:8},{x:3,y:9}];
 function mkPath(){const m=Math.random()<.5?PL:PR;return[...PE,...m.slice(1),...PX.slice(1)]}
 const dist=(a,b)=>Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);
 const CHAMPS=[
-{id:"jarvan",n:"Jarvan",e:"🛡️",c:1,r:"Thunder",cl:"Defender",rng:1.8,a:50,as:.65,mm:60,mp:10,ob:1,pc:"#3b82f6"},
+// 1-cost (7)
+{id:"jarvan",n:"Jarvan",e:"🛡️",c:1,r:"Thunder",cl:"Juggernaut",rng:1.8,a:45,as:.6,mm:60,mp:8,ob:1,pc:"#3b82f6"},
 {id:"sona",n:"Sona",e:"🎵",c:1,r:"Thunder",cl:"Invoker",rng:3.5,a:35,as:.75,mm:40,mp:12,ob:0,pc:"#93c5fd"},
-{id:"jhin",n:"Jhin",e:"🎭",c:1,r:"Forest",cl:"Gunslinger",rng:5,a:55,as:.5,mm:70,mp:14,ob:0,pc:"#ef4444"},
+{id:"jhin",n:"Jhin",e:"🎭",c:1,r:"Forest",cl:"Invoker",rng:5,a:50,as:.5,mm:80,mp:12,ob:0,pc:"#ef4444"},
 {id:"shen",n:"Shen",e:"⚔️",c:1,r:"Forest",cl:"Bruiser",rng:1.8,a:45,as:.65,mm:50,mp:10,ob:1,pc:"#22c55e"},
 {id:"briar",n:"Briar",e:"🩸",c:1,r:"Fire",cl:"Juggernaut",rng:1.8,a:50,as:.75,mm:50,mp:10,ob:0,pc:"#dc2626"},
-{id:"cait",n:"Caitlyn",e:"🔫",c:1,r:"Machine",cl:"Longshot",rng:6,a:50,as:.65,mm:70,mp:10,ob:0,pc:"#f59e0b"},
-{id:"kog",n:"Kog'Maw",e:"🐛",c:1,r:"Void",cl:"Arcanist",rng:5,a:40,as:.75,mm:50,mp:12,ob:0,pc:"#a855f7"},
-{id:"blitz",n:"Blitzcrank",e:"🤖",c:1,r:"Chemistry",cl:"Juggernaut",rng:4,a:45,as:.6,mm:55,mp:10,ob:1,pc:"#64748b"},
-{id:"vi",n:"Vi",e:"👊",c:2,r:"Machine",cl:"Defender",rng:1.8,a:65,as:.65,mm:55,mp:10,ob:1,pc:"#f472b6"},
-{id:"cho",n:"Cho'Gath",e:"👾",c:2,r:"Void",cl:"Juggernaut",rng:1.8,a:60,as:.55,mm:65,mp:10,ob:1,pc:"#7c3aed"},
+{id:"kog",n:"Kog\'Maw",e:"🐛",c:1,r:"Void",cl:"Arcanist",rng:5,a:40,as:.75,mm:50,mp:12,ob:0,pc:"#a855f7"},
+{id:"blitz",n:"Blitzcrank",e:"🤖",c:1,r:"Chemistry",cl:"Juggernaut",rng:4,a:40,as:.55,mm:60,mp:10,ob:1,pc:"#64748b"},
+// 2-cost (9)
+{id:"vi",n:"Vi",e:"👊",c:2,r:"Machine",cl:"Warden",rng:1.8,a:60,as:.6,mm:60,mp:10,ob:1,pc:"#f472b6"},
+{id:"cho",n:"Cho\'Gath",e:"👾",c:2,r:"Void",cl:"Juggernaut",rng:1.8,a:60,as:.55,mm:65,mp:10,ob:1,pc:"#7c3aed"},
 {id:"ekko",n:"Ekko",e:"⏰",c:2,r:"Chemistry",cl:"Disruptor",rng:1.8,a:55,as:.7,mm:55,mp:12,ob:1,pc:"#06b6d4"},
 {id:"yasuo",n:"Yasuo",e:"🌪️",c:2,r:"Forest",cl:"Warden",rng:1.8,a:75,as:.75,mm:55,mp:14,ob:0,pc:"#6ee7b7"},
+{id:"orianna",n:"Orianna",e:"⚙️",c:2,r:"Machine",cl:"Invoker",rng:4,a:35,as:.65,mm:50,mp:10,ob:0,pc:"#94a3b8"},
+{id:"cait",n:"Caitlyn",e:"🔫",c:2,r:"Machine",cl:"Longshot",rng:6,a:75,as:.65,mm:70,mp:10,ob:0,pc:"#f59e0b"},
+{id:"garen",n:"Garen",e:"🗡️",c:2,r:"Thunder",cl:"Juggernaut",rng:1.8,a:50,as:.55,mm:55,mp:10,ob:1,pc:"#3b82f6"},
+{id:"sera",n:"Seraphine",e:"🎤",c:2,r:"Machine",cl:"Disruptor",rng:4,a:40,as:.6,mm:55,mp:10,ob:1,pc:"#f9a8d4"},
+{id:"herald",n:"Rift Herald",e:"🦀",c:2,r:"Void",cl:"Bruiser",rng:1.8,a:45,as:.5,mm:55,mp:10,ob:1,pc:"#a855f7"},
+// 3-cost (8)
 {id:"ahri",n:"Ahri",e:"🦊",c:3,r:"Forest",cl:"Arcanist",rng:4,a:60,as:.7,mm:65,mp:12,ob:0,pc:"#f9a8d4"},
-{id:"draven",n:"Draven",e:"🪓",c:3,r:"Fire",cl:"Quickstriker",rng:4,a:85,as:.8,mm:55,mp:12,ob:0,pc:"#ef4444"},
-{id:"jinx",n:"Jinx",e:"💥",c:3,r:"Chemistry",cl:"Gunslinger",rng:4,a:75,as:.75,mm:55,mp:10,ob:0,pc:"#f97316"},
-{id:"vayne",n:"Vayne",e:"🏹",c:3,r:"Thunder",cl:"Longshot",rng:5,a:75,as:.8,mm:70,mp:10,ob:0,pc:"#818cf8"},
+{id:"draven",n:"Draven",e:"🪓",c:3,r:"Fire",cl:"Quickstriker",rng:4,a:128,as:.8,mm:55,mp:12,ob:0,pc:"#ef4444"},
+{id:"jinx",n:"Jinx",e:"💥",c:3,r:"Chemistry",cl:"Disruptor",rng:4,a:70,as:.7,mm:60,mp:8,ob:0,pc:"#f97316"},
+{id:"vayne",n:"Vayne",e:"🏹",c:3,r:"Thunder",cl:"Longshot",rng:5,a:113,as:.8,mm:70,mp:10,ob:0,pc:"#818cf8"},
+{id:"darius",n:"Darius",e:"⚒️",c:3,r:"Fire",cl:"Warden",rng:1.8,a:65,as:.5,mm:70,mp:10,ob:0,pc:"#b91c1c"},
+{id:"mundo",n:"Dr.Mundo",e:"💊",c:3,r:"Chemistry",cl:"Bruiser",rng:1.8,a:60,as:.55,mm:70,mp:8,ob:1,pc:"#22c55e"},
+{id:"malz",n:"Malzahar",e:"👁️",c:3,r:"Void",cl:"Disruptor",rng:4,a:45,as:.6,mm:70,mp:10,ob:0,pc:"#c084fc"},
+{id:"sett",n:"Sett",e:"💪",c:3,r:"Forest",cl:"Bruiser",rng:1.8,a:65,as:.55,mm:65,mp:10,ob:1,pc:"#16a34a"},
+// 4-cost (6)
 {id:"lux",n:"Lux",e:"✨",c:4,r:"Thunder",cl:"Arcanist",rng:6,a:70,as:.65,mm:90,mp:10,ob:0,pc:"#fde047"},
 {id:"yone",n:"Yone",e:"⚡",c:4,r:"Forest",cl:"Warden",rng:1.8,a:100,as:.75,mm:75,mp:12,ob:0,pc:"#34d399"},
 {id:"swain",n:"Swain",e:"🦅",c:4,r:"Fire",cl:"Arcanist",rng:3.5,a:80,as:.55,mm:80,mp:10,ob:0,pc:"#c084fc"},
+{id:"ambessa",n:"Ambessa",e:"🔱",c:4,r:"Fire",cl:"Arcanist",rng:1.8,a:85,as:.65,mm:70,mp:10,ob:0,pc:"#ef4444"},
+{id:"belveth",n:"Bel\'Veth",e:"🦑",c:4,r:"Void",cl:"Longshot",rng:1.8,a:80,as:.8,mm:80,mp:8,ob:0,pc:"#7c3aed"},
+{id:"warwick",n:"Warwick",e:"🐺",c:4,r:"Chemistry",cl:"Quickstriker",rng:1.8,a:80,as:.8,mm:70,mp:10,ob:0,pc:"#475569"},
+// 5-cost (3)
+{id:"thex",n:"T-Hex",e:"🔧",c:5,r:"Machine",cl:"Disruptor",rng:4,a:90,as:.7,mm:100,mp:6,ob:1,pc:"#fbbf24"},
+{id:"ziggs",n:"Ziggs",e:"💣",c:5,r:"Chemistry",cl:"Longshot",rng:6,a:85,as:.6,mm:100,mp:6,ob:0,pc:"#f97316"},
+{id:"baron",n:"Baron",e:"🐉",c:5,r:"Void",cl:"Invoker",rng:3,a:95,as:.45,mm:120,mp:6,ob:0,pc:"#a855f7"},
 ];
 const CM={};CHAMPS.forEach(c=>CM[c.id]=c);
-const POOL={1:30,2:25,3:18,4:12};
+const POOL={1:36,2:36,3:33,4:27,5:10};
 const XPN={2:4,3:6,4:10,5:20,6:36,7:40,8:48,9:76};
-const ODDS={2:[100,0,0,0],3:[75,25,0,0],4:[55,30,15,0],5:[40,33,20,7],6:[25,35,25,15],7:[19,30,28,23],8:[14,20,30,36],9:[10,15,25,50],10:[5,10,20,65]};
+const ODDS={2:[100,0,0,0,0],3:[75,25,0,0,0],4:[63,30,7,0,0],5:[56,34,10,0,0],6:[35,40,20,5,0],7:[25,30,36,8,1],8:[15,22,28,27,8],9:[10,14,27,34,15],10:[5,8,20,50,17]};
 const SA={1:1,2:1.8,3:3.2},SS={1:1,2:1.1,3:1.25};
 const RC={Thunder:"#2563eb",Forest:"#16a34a",Fire:"#dc2626",Machine:"#d97706",Void:"#7c3aed",Chemistry:"#475569"};
-const CC={1:"#6b7280",2:"#16a34a",3:"#2563eb",4:"#7c3aed"};
-const RBONUS={Thunder:{2:"Rally on cast: +10%AS 3s",4:"Rally: +15%AS + free hit",6:"Rally: +20%AS + 5%HP smite"},Forest:{3:"Path tier 1",5:"Path tier 2",7:"Path tier 3"},Fire:{3:"Summon Atakhan",5:"Atakhan grows",7:"Atakhan drains"},Machine:{2:"+1 Module",4:"+2 Modules",6:"+3 Modules"},Void:{2:"+1 Mutation +8%AS",4:"+2 Mut +18%AS",6:"+3 Mut +28%AS"},Chemistry:{3:"Shimmer burst",5:"Auto-heal 60%",7:"Shimmer +30%"}};
-const CBONUS={Arcanist:{2:"+15 spell pow",4:"+25 spell pow",6:"+40 spell pow"},Bruiser:{2:"Burn 3%HP/hit",4:"Burn 5%HP",6:"Burn 8%HP+spread"},Defender:{2:"+15%AS on ult",4:"+25%AS",6:"+40%AS+10%dmg"},Disruptor:{2:"Dazzle +25%dmg",4:"+45% dmg"},Gunslinger:{2:"+20%ATK 4th shot",4:"+35%ATK splash"},Invoker:{2:"+25% mana",4:"+45% mana"},Juggernaut:{2:"Slow 10%/hit",4:"Slow 18%",6:"Slow 25%+15%dmg"},Longshot:{2:"+12%+2%/hex",3:"+18%+3%",4:"+24%+4%",5:"+30%+5%"},Quickstriker:{2:"+10-30%AS",3:"+20-45%",4:"+30-60%",5:"+40-80%"},Warden:{2:"4th hit 20%slow",3:"30% slow",4:"40% slow",5:"50%+root"}};
+const CC={1:"#6b7280",2:"#16a34a",3:"#2563eb",4:"#7c3aed",5:"#dc2626"};
+const RBONUS={Thunder:{2:"Rally on cast: +10%AS 3s",3:"Rally: +15%AS + free hit",5:"Rally: +20%AS + 5%HP smite"},Forest:{2:"Path tier 1",4:"Path tier 2 (+60%)",6:"Path tier 3 (+150%)"},Fire:{2:"Summon Atakhan",3:"Atakhan grows +50%",5:"Atakhan drains souls"},Machine:{2:"+1 Module",3:"+2 Modules",5:"+3 Modules, faster"},Void:{2:"+1 Mutation +8%AS",4:"+2 Mut +18%AS",6:"+3 Mut +28%AS"},Chemistry:{2:"All enemies: 1%HP/s poison",4:"2%HP/s + 10% slow",6:"3%HP/s + 20% slow"}};
+const CBONUS={Arcanist:{2:"+15 spell pow",3:"+25 spell pow",5:"+40 spell pow"},Bruiser:{2:"Burn 3%HP/hit",4:"Burn 8%HP+spread"},Disruptor:{2:"Dazzle -10%dmg +25%",3:"Dazzle +45%dmg",5:"+60%dmg +stun"},Invoker:{2:"+25% mana gain",4:"+45% mana gain"},Juggernaut:{2:"Slow 10%/hit",3:"Slow 18%+dmg",5:"Slow 25%+15%dmg"},Longshot:{2:"+12%dmg +2%/hex",4:"+24%dmg +4%/hex"},Quickstriker:{2:"+20-50%AS vs low HP"},Warden:{2:"4th hit 25% slow",4:"40% slow +root"}};
 function waveConf(w){const boss=w%5===0&&w>0;const hasElite=(w%10===3)||(w%10===7)||boss;
   const B=[{f:1,hp:100,cnt:20,ca:5,hs:1.2},{f:11,hp:250,cnt:25,ca:10,hs:1.25},{f:21,hp:400,cnt:30,ca:15,hs:1.25},{f:31,hp:600,cnt:40,ca:20,hs:1.3},{f:41,hp:650,cnt:50,ca:25,hs:1.3}];
   let b=B[0];for(let i=B.length-1;i>=0;i--)if(w>=B[i].f){b=B[i];break}
   const wi=w-b.f;const hp=Math.round(b.hp*b.hs**wi);const normCnt=b.cnt+b.ca*wi;
-  const baseCnt=boss?normCnt*2:normCnt;const eliteCnt=hasElite?Math.floor(baseCnt/10):0;
-  const cnt=baseCnt+eliteCnt+(boss?1:0);const ad=5*2**(Math.floor(w/5));return{count:cnt,hp,ad,isBoss:boss,hasElite}}
+  const bossNorm=boss?Math.round(normCnt*1.5):normCnt;const eliteCnt=hasElite?Math.floor(bossNorm/10):0;
+  const cnt=bossNorm+eliteCnt+(boss?1:0);const ad=5*2**(Math.floor(w/5));return{count:cnt,hp,ad,isBoss:boss,hasElite}}
 
 let G;
 function initGame(){
@@ -136,7 +155,7 @@ function initGame(){
   G={gold:12,lv:3,xp:0,hp:100,wave:0,phase:'prep',shop:[],pool,towers:[],bench:[],enemies:[],obstacles:[],projectiles:[],dmgTexts:[],sel:null,eid:0,tick:0,spawnIdx:0,normSpawned:0,waveTotal:0,waveKills:0,ultFx:[],timer:null};
   G.shop=rollShop(G.lv,G.pool);
 }
-function rollShop(lv,pool){const odds=ODDS[Math.min(lv,10)]||ODDS[10];const byT=[[],[],[],[]];CHAMPS.forEach(c=>{if(pool[c.id]>0)byT[c.c-1].push(c.id)});const s=[];for(let i=0;i<5;i++){let r=Math.random()*100,t=0;for(let j=0;j<4;j++){r-=odds[j];if(r<=0){t=j;break}}const a=byT[t];s.push(a.length?a[Math.floor(Math.random()*a.length)]:null)}return s}
+function rollShop(lv,pool){const odds=ODDS[Math.min(lv,10)]||ODDS[10];const byT=[[],[],[],[],[]];CHAMPS.forEach(c=>{if(pool[c.id]>0)byT[c.c-1].push(c.id)});const s=[];for(let i=0;i<5;i++){let r=Math.random()*100,t=0;for(let j=0;j<5;j++){r-=odds[j];if(r<=0){t=j;break}}const a=byT[t];s.push(a.length?a[Math.floor(Math.random()*a.length)]:null)}return s}
 function tryMerge(){const all=[...G.towers.map(t=>({ref:t,loc:'t'})),...G.bench.map(t=>({ref:t,loc:'b'}))];const grp={};all.forEach(i=>{const k=i.ref.cid+'_'+i.ref.star;(grp[k]=grp[k]||[]).push(i)});for(const[,arr]of Object.entries(grp)){if(arr.length>=3&&arr[0].ref.star<3){arr.slice(1,3).forEach(r=>{if(r.loc==='t')G.towers=G.towers.filter(t=>t!==r.ref);else G.bench=G.bench.filter(t=>t!==r.ref)});arr[0].ref.star++;arr[0].ref.mana=0;setLog('⭐ '+CM[arr[0].ref.cid].e+' '+'★'.repeat(arr[0].ref.star)+'!');tryMerge();return}}}
 function getSyn(){const reg={},cls={};G.towers.forEach(t=>{const c=CM[t.cid];reg[c.r]=(reg[c.r]||0)+1;cls[c.cl]=(cls[c.cl]||0)+1});return{reg,cls}}
 function buyChamp(i){if(G.phase!=='prep')return;const cid=G.shop[i];if(!cid)return;const c=CM[cid];if(G.gold<c.c)return;if(G.bench.length>=8){const same=[...G.towers,...G.bench].filter(t=>t.cid===cid&&t.star===1).length;if(same<2){setLog('Bench full!');render();return}}G.gold-=c.c;G.pool[cid]--;G.bench.push({cid,star:1,mana:0,cd:0,slotIdx:-1});G.shop[i]=null;tryMerge();render()}
@@ -218,15 +237,15 @@ function startWave(){
 function gameTick(){
   if(G.phase!=='combat')return;
   G.tick++;const wc=waveConf(G.wave);const sr=wc.isBoss?30:Math.max(5,11-Math.floor(G.wave/3));
-  if(G.spawnIdx<wc.count&&G.tick%sr===0){const batch=Math.min(Math.random()<.5?1:2,wc.count-G.spawnIdx);for(let s=0;s<batch&&G.spawnIdx<wc.count;s++){let isB=false,isE=false;const expElites=Math.floor(G.normSpawned/10);if(wc.isBoss&&G.normSpawned>=24&&!G.bossSpawned){isB=true;G.bossSpawned=true}else if(wc.hasElite&&G.normSpawned>0&&G.elitesSpawned<expElites){isE=true;G.elitesSpawned++}else{G.normSpawned++}const unitHp=isB?wc.hp*30:isE?wc.hp*5:wc.hp;G.enemies.push({id:G.eid++,hp:unitHp,maxHp:unitHp,ad:wc.ad,path:mkPath(),pi:0,x:3,y:-.5,slow:0,isBoss:isB,isElite:isE});G.spawnIdx++}}
-  G.enemies.forEach(en=>{if(en.hp<=0)return;const bl=G.obstacles.find(o=>o.hp>0&&dist({x:en.x,y:en.y},o)<.7);if(bl){bl.hp-=en.ad*(en.isBoss?3:en.isElite?2:1)/TPS;return}const baseSpd=en.isBoss?ESPD*.5:en.isElite?ESPD*.7:ESPD;const spd=baseSpd*(1-Math.min(en.slow*.4,.6));en.slow=Math.max(0,en.slow-.4/TPS);if(en.pi<en.path.length-1){const tg=en.path[en.pi+1],dx=tg.x-en.x,dy=tg.y-en.y,d=Math.sqrt(dx*dx+dy*dy);if(d<spd){en.x=tg.x;en.y=tg.y;en.pi++}else{en.x+=dx/d*spd;en.y+=dy/d*spd}}else{const lm=Math.min(4,Math.ceil(G.wave/10));G.hp-=(en.isBoss?10:en.isElite?5:1)*lm;en.hp=0}});
+  if(G.spawnIdx<wc.count&&G.tick%sr===0){const batch=Math.min(Math.random()<.5?1:2,wc.count-G.spawnIdx);for(let s=0;s<batch&&G.spawnIdx<wc.count;s++){let isB=false,isE=false;const expElites=Math.floor(G.normSpawned/10);if(wc.isBoss&&G.normSpawned>=24&&!G.bossSpawned){isB=true;G.bossSpawned=true}else if(wc.hasElite&&G.normSpawned>0&&G.elitesSpawned<expElites){isE=true;G.elitesSpawned++}else{G.normSpawned++}const bossHpMult=wc.isBoss?(G.wave%10===5?20:40):0;const unitHp=isB?wc.hp*bossHpMult:isE?wc.hp*5:wc.hp;G.enemies.push({id:G.eid++,hp:unitHp,maxHp:unitHp,ad:wc.ad,path:mkPath(),pi:0,x:3,y:-.5,slow:0,isBoss:isB,isElite:isE,cellsT:0,pauseT:0});G.spawnIdx++}}
+  G.enemies.forEach(en=>{if(en.hp<=0)return;const bl=G.obstacles.find(o=>o.hp>0&&dist({x:en.x,y:en.y},o)<.7);if(bl){bl.hp-=en.ad*(en.isBoss?3:en.isElite?2:1)/TPS;return}if(en.isBoss&&en.pauseT>0){en.pauseT--;return}const baseSpd=en.isBoss?ESPD*.35:en.isElite?ESPD*.7:ESPD;const spd=baseSpd*(1-Math.min(en.slow*.4,.6));en.slow=Math.max(0,en.slow-.4/TPS);if(en.pi<en.path.length-1){const tg=en.path[en.pi+1],dx=tg.x-en.x,dy=tg.y-en.y,d=Math.sqrt(dx*dx+dy*dy);if(d<spd){en.x=tg.x;en.y=tg.y;en.pi++;if(en.isBoss){en.cellsT+=d;if(en.cellsT>=3){en.cellsT-=3;en.pauseT=Math.round(3*2*TPS)}}}else{en.x+=dx/d*spd;en.y+=dy/d*spd;if(en.isBoss)en.cellsT+=spd}}else{const lm=Math.min(4,Math.ceil(G.wave/10));G.hp-=(en.isBoss?10:en.isElite?5:1)*lm;en.hp=0}});
   G.obstacles=G.obstacles.filter(o=>o.hp>0);
   G.projectiles.forEach(p=>{const dx=p.tx-p.x,dy=p.ty-p.y,d=Math.sqrt(dx*dx+dy*dy);if(d<.15){p.done=true;return}const spd=.25;p.x+=dx/d*spd;p.y+=dy/d*spd});
   G.projectiles=G.projectiles.filter(p=>!p.done&&G.tick-p.t<30);
-  G.towers.forEach(t=>{const c=CM[t.cid],sl=TS[t.slotIdx];if(!sl)return;t.cd=Math.max(0,t.cd-1);if(t.cd>0)return;const star=t.star||1,atk=c.a*SA[star],spd=c.as*SS[star],rng=c.rng+(star-1)*.3;let tgt=null,md=1e9;G.enemies.forEach(en=>{if(en.hp<=0)return;const d=dist(sl,{x:en.x,y:en.y});if(d<=rng&&d<md){md=d;tgt=en}});if(!tgt)return;G.projectiles.push({x:sl.x,y:sl.y,tx:tgt.x,ty:tgt.y,t:G.tick,col:c.pc||'#888',sz:star>1?6:4});tgt.hp-=atk;G.dmgTexts.push({x:tgt.x,y:tgt.y,dmg:Math.round(atk),t:G.tick,isUlt:false});t.cd=Math.round(TPS/spd);t.mana=Math.min((t.mana||0)+c.mp,c.mm);if(tgt.hp<=0){G.waveKills++}if(t.mana>=c.mm){t.mana=0;const ud=atk*2.5;G.enemies.forEach(en=>{if(en.hp>0&&dist({x:en.x,y:en.y},{x:tgt.x,y:tgt.y})<2.5){en.hp-=ud;en.slow=Math.min(en.slow+1,3);G.dmgTexts.push({x:en.x,y:en.y,dmg:Math.round(ud),t:G.tick,isUlt:true});if(en.hp<=0){G.waveKills++}}});if(c.ob)G.obstacles.push({x:tgt.x,y:tgt.y,hp:50,maxHp:50});G.ultFx.push({x:tgt.x,y:tgt.y,t:G.tick})}});
+  G.towers.forEach(t=>{const c=CM[t.cid],sl=TS[t.slotIdx];if(!sl)return;t.cd=Math.max(0,t.cd-1);if(t.cd>0)return;const star=t.star||1,atk=c.a*SA[star],spd=c.as*SS[star],rng=c.rng+(star-1)*.3;let tgt=null,md=1e9;G.enemies.forEach(en=>{if(en.hp<=0)return;const d=dist(sl,{x:en.x,y:en.y});if(d<=rng&&d<md){md=d;tgt=en}});if(!tgt)return;G.projectiles.push({x:sl.x,y:sl.y,tx:tgt.x,ty:tgt.y,t:G.tick,col:c.pc||'#888',sz:star>1?6:4});tgt.hp-=atk;G.dmgTexts.push({x:tgt.x,y:tgt.y,dmg:Math.round(atk),t:G.tick,isUlt:false});t.cd=Math.round(TPS/spd);t.mana=Math.min((t.mana||0)+c.mp,c.mm);if(tgt.hp<=0){G.waveKills++}if(t.mana>=c.mm){t.mana=0;const ud=atk*2.5*(c.c>=4?.7:1);G.enemies.forEach(en=>{if(en.hp>0&&dist({x:en.x,y:en.y},{x:tgt.x,y:tgt.y})<2.5){en.hp-=ud;en.slow=Math.min(en.slow+1,3);G.dmgTexts.push({x:en.x,y:en.y,dmg:Math.round(ud),t:G.tick,isUlt:true});if(en.hp<=0){G.waveKills++}}});if(c.ob)G.obstacles.push({x:tgt.x,y:tgt.y,hp:50,maxHp:50});G.ultFx.push({x:tgt.x,y:tgt.y,t:G.tick})}});
   G.ultFx=G.ultFx.filter(f=>G.tick-f.t<12);
   G.dmgTexts=G.dmgTexts.filter(d=>G.tick-d.t<18);
-  if(G.spawnIdx>=wc.count&&G.enemies.every(e=>e.hp<=0)){clearInterval(G.timer);const perf=G.waveKills>=wc.count;const bg=Math.ceil(G.wave/10);const int=Math.min(5,Math.floor(G.gold/10));const pf=perf?1:0,bs=wc.isBoss?3:0;const tot=bg+int+pf+bs;G.gold+=tot;G.xp+=2;if(G.lv<10&&XPN[G.lv]&&G.xp>=XPN[G.lv]){G.xp-=XPN[G.lv];G.lv++}G.shop.forEach(c=>{if(c)G.pool[c]++});G.shop=rollShop(G.lv,G.pool);setLog('✅ Wave '+G.wave+'! +'+tot+'🪙');G.phase=G.hp<=0?'over':'prep';G.enemies=[];G.obstacles=[];G.projectiles=[]}
+  if(G.spawnIdx>=wc.count&&G.enemies.every(e=>e.hp<=0)){clearInterval(G.timer);const perf=G.waveKills>=wc.count;const bg=Math.min(5,Math.ceil(G.wave/10)+1);const int=Math.min(5,Math.floor(G.gold/10));const pf=perf?1:0,bs=wc.isBoss?3:0;const tot=bg+int+pf+bs;G.gold+=tot;G.xp+=2;if(G.lv<10&&XPN[G.lv]&&G.xp>=XPN[G.lv]){G.xp-=XPN[G.lv];G.lv++}G.shop.forEach(c=>{if(c)G.pool[c]++});G.shop=rollShop(G.lv,G.pool);setLog('✅ Wave '+G.wave+'! +'+tot+'🪙');G.phase=G.hp<=0?'over':'prep';G.enemies=[];G.obstacles=[];G.projectiles=[]}
   if(G.hp<=0){clearInterval(G.timer);G.phase='over';setLog('💀 Game Over! Wave '+G.wave)}
   render();
 }

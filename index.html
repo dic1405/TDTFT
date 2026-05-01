@@ -124,7 +124,7 @@ const CC={1:"#6b7280",2:"#16a34a",3:"#2563eb",4:"#7c3aed"};
 const RBONUS={Thunder:{2:"Rally on cast: +10%AS 3s",4:"Rally: +15%AS + free hit",6:"Rally: +20%AS + 5%HP smite"},Forest:{3:"Path tier 1",5:"Path tier 2",7:"Path tier 3"},Fire:{3:"Summon Atakhan",5:"Atakhan grows",7:"Atakhan drains"},Machine:{2:"+1 Module",4:"+2 Modules",6:"+3 Modules"},Void:{2:"+1 Mutation +8%AS",4:"+2 Mut +18%AS",6:"+3 Mut +28%AS"},Chemistry:{3:"Shimmer burst",5:"Auto-heal 60%",7:"Shimmer +30%"}};
 const CBONUS={Arcanist:{2:"+15 spell pow",4:"+25 spell pow",6:"+40 spell pow"},Bruiser:{2:"Burn 3%HP/hit",4:"Burn 5%HP",6:"Burn 8%HP+spread"},Defender:{2:"+15%AS on ult",4:"+25%AS",6:"+40%AS+10%dmg"},Disruptor:{2:"Dazzle +25%dmg",4:"+45% dmg"},Gunslinger:{2:"+20%ATK 4th shot",4:"+35%ATK splash"},Invoker:{2:"+25% mana",4:"+45% mana"},Juggernaut:{2:"Slow 10%/hit",4:"Slow 18%",6:"Slow 25%+15%dmg"},Longshot:{2:"+12%+2%/hex",3:"+18%+3%",4:"+24%+4%",5:"+30%+5%"},Quickstriker:{2:"+10-30%AS",3:"+20-45%",4:"+30-60%",5:"+40-80%"},Warden:{2:"4th hit 20%slow",3:"30% slow",4:"40% slow",5:"50%+root"}};
 function waveConf(w){const boss=w%5===0&&w>0;const hasElite=(w%10===3)||(w%10===7)||boss;
-  const B=[{f:1,hp:100,cnt:20,ca:5,hs:1.2},{f:11,hp:200,cnt:25,ca:10,hs:1.2},{f:21,hp:300,cnt:30,ca:15,hs:1.25},{f:31,hp:400,cnt:40,ca:20,hs:1.25},{f:41,hp:500,cnt:50,ca:25,hs:1.25}];
+  const B=[{f:1,hp:100,cnt:20,ca:5,hs:1.2},{f:11,hp:250,cnt:25,ca:10,hs:1.25},{f:21,hp:400,cnt:30,ca:15,hs:1.25},{f:31,hp:600,cnt:40,ca:20,hs:1.3},{f:41,hp:650,cnt:50,ca:25,hs:1.3}];
   let b=B[0];for(let i=B.length-1;i>=0;i--)if(w>=B[i].f){b=B[i];break}
   const wi=w-b.f;const hp=Math.round(b.hp*b.hs**wi);const normCnt=b.cnt+b.ca*wi;
   const baseCnt=boss?normCnt*2:normCnt;const eliteCnt=hasElite?Math.floor(baseCnt/10):0;
@@ -133,7 +133,7 @@ function waveConf(w){const boss=w%5===0&&w>0;const hasElite=(w%10===3)||(w%10===
 let G;
 function initGame(){
   const pool={};CHAMPS.forEach(c=>pool[c.id]=POOL[c.c]||12);
-  G={gold:12,lv:2,xp:0,hp:100,wave:0,phase:'prep',shop:[],pool,towers:[],bench:[],enemies:[],obstacles:[],projectiles:[],dmgTexts:[],sel:null,eid:0,tick:0,spawnIdx:0,normSpawned:0,waveTotal:0,waveKills:0,ultFx:[],timer:null};
+  G={gold:12,lv:3,xp:0,hp:100,wave:0,phase:'prep',shop:[],pool,towers:[],bench:[],enemies:[],obstacles:[],projectiles:[],dmgTexts:[],sel:null,eid:0,tick:0,spawnIdx:0,normSpawned:0,waveTotal:0,waveKills:0,ultFx:[],timer:null};
   G.shop=rollShop(G.lv,G.pool);
 }
 function rollShop(lv,pool){const odds=ODDS[Math.min(lv,10)]||ODDS[10];const byT=[[],[],[],[]];CHAMPS.forEach(c=>{if(pool[c.id]>0)byT[c.c-1].push(c.id)});const s=[];for(let i=0;i<5;i++){let r=Math.random()*100,t=0;for(let j=0;j<4;j++){r-=odds[j];if(r<=0){t=j;break}}const a=byT[t];s.push(a.length?a[Math.floor(Math.random()*a.length)]:null)}return s}
@@ -218,8 +218,8 @@ function startWave(){
 function gameTick(){
   if(G.phase!=='combat')return;
   G.tick++;const wc=waveConf(G.wave);const sr=wc.isBoss?30:Math.max(5,11-Math.floor(G.wave/3));
-  if(G.spawnIdx<wc.count&&G.tick%sr===0){const batch=Math.min(Math.random()<.5?1:2,wc.count-G.spawnIdx);for(let s=0;s<batch&&G.spawnIdx<wc.count;s++){let isB=false,isE=false;const expElites=Math.floor(G.normSpawned/10);if(wc.isBoss&&G.normSpawned>=24&&!G.bossSpawned){isB=true;G.bossSpawned=true}else if(wc.hasElite&&G.normSpawned>0&&G.elitesSpawned<expElites){isE=true;G.elitesSpawned++}else{G.normSpawned++}const unitHp=isB?wc.hp*10:isE?wc.hp*3:wc.hp;G.enemies.push({id:G.eid++,hp:unitHp,maxHp:unitHp,ad:wc.ad,path:mkPath(),pi:0,x:3,y:-.5,slow:0,isBoss:isB,isElite:isE});G.spawnIdx++}}
-  G.enemies.forEach(en=>{if(en.hp<=0)return;const bl=G.obstacles.find(o=>o.hp>0&&dist({x:en.x,y:en.y},o)<.7);if(bl){bl.hp-=en.ad*(en.isBoss?3:en.isElite?2:1)/TPS;return}const baseSpd=en.isBoss?ESPD*.5:ESPD;const spd=baseSpd*(1-Math.min(en.slow*.4,.6));en.slow=Math.max(0,en.slow-.4/TPS);if(en.pi<en.path.length-1){const tg=en.path[en.pi+1],dx=tg.x-en.x,dy=tg.y-en.y,d=Math.sqrt(dx*dx+dy*dy);if(d<spd){en.x=tg.x;en.y=tg.y;en.pi++}else{en.x+=dx/d*spd;en.y+=dy/d*spd}}else{const lm=Math.min(4,Math.ceil(G.wave/10));G.hp-=(en.isBoss?10:en.isElite?3:1)*lm;en.hp=0}});
+  if(G.spawnIdx<wc.count&&G.tick%sr===0){const batch=Math.min(Math.random()<.5?1:2,wc.count-G.spawnIdx);for(let s=0;s<batch&&G.spawnIdx<wc.count;s++){let isB=false,isE=false;const expElites=Math.floor(G.normSpawned/10);if(wc.isBoss&&G.normSpawned>=24&&!G.bossSpawned){isB=true;G.bossSpawned=true}else if(wc.hasElite&&G.normSpawned>0&&G.elitesSpawned<expElites){isE=true;G.elitesSpawned++}else{G.normSpawned++}const unitHp=isB?wc.hp*30:isE?wc.hp*10:wc.hp;G.enemies.push({id:G.eid++,hp:unitHp,maxHp:unitHp,ad:wc.ad,path:mkPath(),pi:0,x:3,y:-.5,slow:0,isBoss:isB,isElite:isE});G.spawnIdx++}}
+  G.enemies.forEach(en=>{if(en.hp<=0)return;const bl=G.obstacles.find(o=>o.hp>0&&dist({x:en.x,y:en.y},o)<.7);if(bl){bl.hp-=en.ad*(en.isBoss?3:en.isElite?2:1)/TPS;return}const baseSpd=en.isBoss?ESPD*.5:en.isElite?ESPD*.7:ESPD;const spd=baseSpd*(1-Math.min(en.slow*.4,.6));en.slow=Math.max(0,en.slow-.4/TPS);if(en.pi<en.path.length-1){const tg=en.path[en.pi+1],dx=tg.x-en.x,dy=tg.y-en.y,d=Math.sqrt(dx*dx+dy*dy);if(d<spd){en.x=tg.x;en.y=tg.y;en.pi++}else{en.x+=dx/d*spd;en.y+=dy/d*spd}}else{const lm=Math.min(4,Math.ceil(G.wave/10));G.hp-=(en.isBoss?10:en.isElite?5:1)*lm;en.hp=0}});
   G.obstacles=G.obstacles.filter(o=>o.hp>0);
   G.projectiles.forEach(p=>{const dx=p.tx-p.x,dy=p.ty-p.y,d=Math.sqrt(dx*dx+dy*dy);if(d<.15){p.done=true;return}const spd=.25;p.x+=dx/d*spd;p.y+=dy/d*spd});
   G.projectiles=G.projectiles.filter(p=>!p.done&&G.tick-p.t<30);
